@@ -1,0 +1,326 @@
+openapi: 3.0.0
+info:
+  title: Payment Service API
+  description: REST API for managing payment processing
+  version: 1.0.0
+
+paths:
+  /api/v1/payments:
+    post:
+      summary: Submit a new payment request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '201':
+          description: Payment request created successfully
+        '400':
+          description: Bad request, invalid input
+        '401':
+          description: Unauthorized, authentication required
+        '403':
+          description: Forbidden, insufficient permissions
+        '500':
+          description: Internal server error
+
+    get:
+      summary: Get a list of all payments
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentDetails'
+        '401':
+          description: Unauthorized, authentication required
+        '403':
+          description: Forbidden, insufficient permissions
+        '500':
+          description: Internal server error
+
+  /api/v1/payments/{paymentId}:
+    get:
+      summary: Get details of a specific payment
+      parameters:
+        - name: paymentId
+          in: path
+          description: ID of the payment
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDetails'
+        '401':
+          description: Unauthorized, authentication required
+        '403':
+          description: Forbidden, insufficient permissions
+        '404':
+          description: Payment not found
+        '500':
+          description: Internal server error
+
+  /api/v1/services:
+    post:
+      summary: Create a new service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        '201':
+          description: Service created successfully
+        '400':
+          description: Bad request, invalid input
+        '401':
+          description: Unauthorized, authentication required
+        '403':
+          description: Forbidden, insufficient permissions
+        '500':
+          description: Internal server error
+
+    get:
+      summary: Get a list of all services
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized, authentication required
+        '403':
+          description: Forbidden, insufficient permissions
+        '500':
+          description: Internal server error
+
+  /api/v1/services/{serviceId}:
+    get:
+      summary: Get details of a specific service
+      parameters:
+        - name: serviceId
+          in: path
+          description: ID of the service
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized, authentication required
+        '403':
+          description: Forbidden, insufficient permissions
+        '404':
+          description: Service not found
+        '500':
+          description: Internal server error
+
+  /api/v1/service-providers:
+    post:
+      summary: Create a new service provider
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceProvider'
+      responses:
+        '201':
+          description: Service provider created successfully
+        '400':
+          description: Bad request, invalid input
+        '401':
+          description: Unauthorized, authentication required
+        '403':
+          description: Forbidden, insufficient permissions
+        '500':
+          description: Internal server error
+
+    get:
+      summary: Get a list of all service providers
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceProvider'
+        '401':
+          description: Unauthorized, authentication required
+        '403':
+          description: Forbidden, insufficient permissions
+        '500':
+          description: Internal server error
+
+  /api/v1/service-providers/{providerId}:
+    get:
+      summary: Get details of a specific service provider
+      parameters:
+        - name: providerId
+          in: path
+          description: ID of the service provider
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceProvider'
+        '401':
+          description: Unauthorized, authentication required
+        '403':
+          description: Forbidden, insufficient permissions
+        '404':
+          description: Service provider not found
+        '500':
+          description: Internal server error
+
+    put:
+      summary: Update details of a specific service provider
+      parameters:
+        - name: providerId
+          in: path
+          description: ID of the service provider
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceProvider'
+      responses:
+        '200':
+          description: Service provider updated successfully
+        '401':
+          description: Unauthorized, authentication required
+        '403':
+          description: Forbidden, insufficient permissions
+        '404':
+          description: Service provider not found
+        '500':
+          description: Internal server error
+
+    delete:
+      summary: Delete a specific service provider
+      parameters:
+        - name: providerId
+          in: path
+          description: ID of the service provider
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Service provider deleted successfully
+        '401':
+          description: Unauthorized, authentication required
+        '403':
+          description: Forbidden, insufficient permissions
+        '404':
+          description: Service provider not found
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    PaymentRequest:
+      type: object
+      properties:
+        serviceId:
+          type: string
+          description: The unique identifier for the service initiating the payment
+        amount:
+          type: integer
+          format: int64
+          description: The payment amount
+        description:
+          type: string
+          description: Additional details about the payment
+        dateTime:
+          type: string
+          format: date-time
+          description: The date and time associated with the payment request
+    
+     PaymentDetails:
+      type: object
+        properties:
+          paymentId:
+            type: string
+            description: The unique identifier for the payment
+          serviceId:
+            type: string
+            description: The unique identifier for the service that processed the payment
+          amount:
+            type: integer
+            format: int64
+            description: The payment amount
+          status:
+            type: string
+            description: The status of the payment (e.g., "pending", "completed")
+          serviceName:
+            type: string
+            description: The name of the service that processed the payment
+          dateTime:
+            type: string
+            format: date-time
+            description: The date and time associated with the payment
+   
+      Service:
+        type: object
+        properties:
+          serviceId:
+            type: string
+            description: The unique identifier for the service
+          serviceName:
+            type: string
+            description: The name of the service
+          serviceDescription:
+            type: string
+            description: Description of the service
+          serviceProviderId:
+            type: string
+            description: The unique identifier for the service provider
+
+      ServiceProvider:
+        type: object
+        properties:
+          id:
+            type: string
+            description: The unique identifier for the service provider
+          name:
+            type: string
+            description: The name of the service provider
+          description:
+            type: string
+            description: Description of the service provider
+          url:
+            type: string
+            format: uri
+            description: URL of the service provider
