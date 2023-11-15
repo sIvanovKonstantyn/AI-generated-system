@@ -33,11 +33,11 @@ public class PaymentRequest {
         this.description = description;
     }
 
-    public String getDateTime() {
+    public LocalDateTime getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(String dateTime) {
+    public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
 }
