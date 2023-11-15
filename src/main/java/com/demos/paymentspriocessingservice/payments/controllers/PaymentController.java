@@ -1,6 +1,4 @@
-package com.demos.paymentspriocessingservice.payments.controllers
-
-package com.yourcompany.payment.controllers;
+package com.demos.paymentspriocessingservice.payments.controllers;
 
 import com.demos.paymentspriocessingservice.payments.models.PaymentDetails;
 import com.demos.paymentspriocessingservice.payments.models.PaymentRequest;
