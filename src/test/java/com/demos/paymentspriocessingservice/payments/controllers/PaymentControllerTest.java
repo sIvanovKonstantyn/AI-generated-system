@@ -1,5 +1,6 @@
 package com.demos.paymentspriocessingservice.payments.controllers;
 
+import com.demos.paymentspriocessingservice.payments.models.PaymentRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
