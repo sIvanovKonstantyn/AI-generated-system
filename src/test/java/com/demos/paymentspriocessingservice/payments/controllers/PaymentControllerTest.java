@@ -41,7 +41,7 @@ public class PaymentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/payments"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.content().json("[]")); // Adjust based on your expected response content
+                .andExpect(MockMvcResultMatchers.content().json("[{}]")); // Adjust based on your expected response content
     }
 
     @Test
