@@ -1,4 +1,4 @@
-package com.demos.paymentsprocessing.services.models;
+package com.demos.paymentsprocessingservice.services.models;
 
 public class Service {
 

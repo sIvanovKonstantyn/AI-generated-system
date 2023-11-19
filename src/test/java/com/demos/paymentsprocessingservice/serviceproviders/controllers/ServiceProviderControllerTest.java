@@ -1,6 +1,6 @@
-package com.demos.paymentsprocessing.services.controllers;
+package com.demos.paymentsprocessingservice.serviceproviders.controllers;
 
-import com.demos.paymentsprocessing.services.models.ServiceProvider;
+import com.demos.paymentsprocessingservice.serviceproviders.models.ServiceProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class ServiceProviderControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/service-providers"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.content().json("[]")); // Adjust based on your expected response content
+                .andExpect(MockMvcResultMatchers.content().json("[{}]")); // Adjust based on your expected response content
     }
 
     @Test

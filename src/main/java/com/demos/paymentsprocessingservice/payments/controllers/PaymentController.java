@@ -1,7 +1,7 @@
-package com.demos.paymentspriocessingservice.payments.controllers;
+package com.demos.paymentsprocessingservice.payments.controllers;
 
-import com.demos.paymentspriocessingservice.payments.models.PaymentDetails;
-import com.demos.paymentspriocessingservice.payments.models.PaymentRequest;
+import com.demos.paymentsprocessingservice.payments.models.PaymentDetails;
+import com.demos.paymentsprocessingservice.payments.models.PaymentRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

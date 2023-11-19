@@ -1,4 +1,4 @@
-package com.demos.paymentspriocessingservice.payments.models;
+package com.demos.paymentsprocessingservice.payments.models;
 
 import java.time.LocalDateTime;
 
