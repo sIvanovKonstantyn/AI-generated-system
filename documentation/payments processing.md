@@ -3,28 +3,25 @@
 
 ```mermaid
 graph TD
-  A[Receive Payment Request] -->|Payment Details| B[Check User Balance]
-  B -->|Sufficient Balance| C[Save Payment State]
-  C -->|Identify Payment System| D[Send Payment Request to Provider]
-  D -->|Success| E[Save Payment History]
-  D -->|Failure| F[Handle Unavailability]
-  F -->|Retries| D
-  F -->|Notify Users| G[Notify on Unavailability]
-  D -->|Failure in Middle| H[Continue on Failure]
-  E -->|Save Payment State| I[Save Payment State]
-  H -->|Payment State: X| I[Save Payment State]
-  H -->|Payment State: Y| J[Another Handling Logic]
-  
+  A[Receive Payment Request] -->|Payment Details| B[Save Payment State (New)]
+  B -->|Check User Balance| C[Save Payment State (Balance Checked)]
+  C -->|Identify Payment System| D[Save Payment State (Ready to Be Sent)]
+  D -->|Send Payment Request to Provider| 
+  D -->|Expected Error| E[Retry (Number of Times)]
+  E -->|Send Payment Request to Provider|
+  D -->|Unexpected Error| F[Save Payment State (Error)]
+  F -->|Notify About Error| G[End]
+  D -->|Successful| H[Save Payment State (Completed)]
+  H -->|End| G
+
   style A fill:#86C7F3,stroke:#000
   style B fill:#86C7F3,stroke:#000
   style C fill:#86C7F3,stroke:#000
   style D fill:#86C7F3,stroke:#000
-  style E fill:#86C7F3,stroke:#000
+  style E fill:#FF7F7F,stroke:#000
   style F fill:#FF7F7F,stroke:#000
-  style G fill:#FF7F7F,stroke:#000
-  style H fill:#FF7F7F,stroke:#000
-  style I fill:#86C7F3,stroke:#000
-  style J fill:#FF7F7F,stroke:#000
+  style G fill:#86C7F3,stroke:#000
+  style H fill:#86C7F3,stroke:#000
 
 ```
 	1.	Receive Payment Request:
