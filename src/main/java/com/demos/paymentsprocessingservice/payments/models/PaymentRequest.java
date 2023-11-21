@@ -8,6 +8,16 @@ public class PaymentRequest {
     private int amount;
     private String description;
     private LocalDateTime dateTime;
+    private String userId;
+
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getServiceId() {
         return serviceId;
