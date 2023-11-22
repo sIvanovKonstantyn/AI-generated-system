@@ -1,3 +1,5 @@
+package com.demos.paymentsprocessingservice.payments.models;
+
 public enum PaymentState {
     NEW,
     BALANCE_CHECKED,

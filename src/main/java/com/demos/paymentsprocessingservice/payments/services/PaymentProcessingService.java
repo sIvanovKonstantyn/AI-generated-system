@@ -1,3 +1,8 @@
+package com.demos.paymentsprocessingservice.payments.services;
+
+import com.demos.paymentsprocessingservice.payments.models.PaymentHistory;
+import com.demos.paymentsprocessingservice.payments.repositories.PaymentHistoryRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.demos.paymentsprocessingservice.payments.models.PaymentState;
@@ -6,14 +11,16 @@ import com.demos.paymentsprocessingservice.payments.clients.UserServiceClient;
 import com.demos.paymentsprocessingservice.payments.clients.ServiceProviderClient;
 
 @Service
+@Slf4j
 public class PaymentProcessingService {
-
     private final UserServiceClient userServiceClient;
     private final ServiceProviderClient serviceProviderClient;
     private final PaymentHistoryRepository paymentHistoryRepository;
 
     @Autowired
-    public PaymentProcessingService(UserServiceClient userServiceClient, ServiceProviderClient serviceProviderClient, PaymentHistoryRepository paymentHistoryRepository) {
+    public PaymentProcessingService(UserServiceClient userServiceClient,
+                                    ServiceProviderClient serviceProviderClient,
+                                    PaymentHistoryRepository paymentHistoryRepository) {
         this.userServiceClient = userServiceClient;
         this.serviceProviderClient = serviceProviderClient;
         this.paymentHistoryRepository = paymentHistoryRepository;
@@ -21,23 +28,39 @@ public class PaymentProcessingService {
 
     public void createPayment(PaymentRequest paymentRequest) {
         try {
+            log.atInfo().log(
+                "Payment with description '{}' started processing for the user {}",
+                paymentRequest.getDescription(),
+                paymentRequest.getUserId()
+            );
+
             validatePaymentRequest(paymentRequest);
 
-            savePaymentState(PaymentState.NEW, paymentRequest.getUserId(), paymentRequest.getDescription(), null);
+            savePaymentState(PaymentState.NEW, paymentRequest.getUserId(),
+                paymentRequest.getDescription(), null);
 
             checkUserBalance(paymentRequest.getUserId(), paymentRequest.getAmount());
 
-            savePaymentState(PaymentState.BALANCE_CHECKED, paymentRequest.getUserId(), paymentRequest.getDescription(), null);
+            savePaymentState(PaymentState.BALANCE_CHECKED, paymentRequest.getUserId(),
+                paymentRequest.getDescription(), null);
 
             String paymentSystem = identifyPaymentSystem(paymentRequest.getServiceId());
 
-            savePaymentState(PaymentState.READY_TO_BE_SENT, paymentRequest.getUserId(), paymentRequest.getDescription(), null);
+            savePaymentState(PaymentState.READY_TO_BE_SENT, paymentRequest.getUserId(),
+                paymentRequest.getDescription(), null);
 
             sendPaymentRequest(paymentSystem, paymentRequest);
 
+            log.atInfo().log(
+                "Payment with description '{}' finished processing for the user {}",
+                paymentRequest.getDescription(),
+                paymentRequest.getUserId()
+            );
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            savePaymentState(PaymentState.ERROR);
+            log.atError().setCause(e).log(e.getMessage());
+            savePaymentState(PaymentState.ERROR, paymentRequest.getUserId(),
+                paymentRequest.getDescription(), e.getMessage());
+
             notifyAboutError();
         }
     }
@@ -67,7 +90,7 @@ public class PaymentProcessingService {
             throw new Exception("Invalid balance");
         }
 
-        if (mockUserBalance < requestedAmount) {
+        if (userBalance < requestedAmount) {
             throw new Exception("Insufficient balance");
         }
     }
