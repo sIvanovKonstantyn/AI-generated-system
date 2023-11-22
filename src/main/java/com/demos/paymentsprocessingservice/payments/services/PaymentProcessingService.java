@@ -37,7 +37,7 @@ public class PaymentProcessingService {
      * @param paymentRequest The payment request to be processed.
      * @throws Exception If an error occurs during payment processing.
      */
-    public void createPayment(PaymentRequest paymentRequest) {
+    public String createPayment(PaymentRequest paymentRequest) {
         try {
             log.atInfo().log(
                 "Payment with description '{}' started processing for the user {}",
@@ -47,7 +47,7 @@ public class PaymentProcessingService {
 
             validatePaymentRequest(paymentRequest);
 
-            savePaymentState(PaymentState.NEW, paymentRequest.getUserId(),
+            String paymentId = savePaymentState(PaymentState.NEW, paymentRequest.getUserId(),
                 paymentRequest.getDescription(), null);
 
             checkUserBalance(paymentRequest.getUserId(), paymentRequest.getAmount());
@@ -67,12 +67,16 @@ public class PaymentProcessingService {
                 paymentRequest.getDescription(),
                 paymentRequest.getUserId()
             );
+
+            return paymentId;
+
         } catch (Exception e) {
             log.atError().setCause(e).log(e.getMessage());
             savePaymentState(PaymentState.ERROR, paymentRequest.getUserId(),
                 paymentRequest.getDescription(), e.getMessage());
 
             notifyAboutError();
+            throw new Exception("Payment creation exception");
         }
     }
 
@@ -106,8 +110,23 @@ public class PaymentProcessingService {
         }
     }
 
-    private void savePaymentState(PaymentState paymentState, String userId, String paymentDescription, String error) {
+    private String savePaymentState(PaymentState paymentState, String userId, String paymentDescription, String error) {
         PaymentHistory paymentHistory = new PaymentHistory(userId, paymentDescription, paymentState, error);
-        paymentHistoryRepository.save(paymentHistory);
+        PaymentHistory savedHistory = paymentHistoryRepository.save(paymentHistory);
+        return savedHistory.getId();
+    }
+
+        public List<PaymentDetails> getAllPayments() {
+        // Mock logic for getting all payments
+        // Return a list of PaymentDetails or another suitable response based on your actual logic
+        return paymentHistoryRepository.getAllForUser(getUserFromSecurityContext())
+                .map(ph -> new PaymentDetails(ph))
+                .collect(Collectors.toList());
+    }
+
+    public PaymentDetails getPaymentDetails(String paymentId) {
+        return paymentHistoryRepository.getById(paymentId)
+                .map(ph -> new PaymentDetails(ph))
+                .collect(Collectors.toList());
     }
 }
