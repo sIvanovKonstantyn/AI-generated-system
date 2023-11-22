@@ -10,6 +10,10 @@ import com.demos.paymentsprocessingservice.payments.models.PaymentRequest;
 import com.demos.paymentsprocessingservice.payments.clients.UserServiceClient;
 import com.demos.paymentsprocessingservice.payments.clients.ServiceProviderClient;
 
+/**
+ * Service responsible for processing payment requests.
+ * For detailed documentation, visit: [Payments Processing Documentation](https://github.com/sIvanovKonstantyn/AI-generated-system/blob/main/documentation/payments%20processing.md)
+ */
 @Service
 @Slf4j
 public class PaymentProcessingService {
@@ -26,6 +30,13 @@ public class PaymentProcessingService {
         this.paymentHistoryRepository = paymentHistoryRepository;
     }
 
+    /**
+     * Processes a payment request, including validation, balance check, system identification,
+     * and sending the payment request to the service provider.
+     *
+     * @param paymentRequest The payment request to be processed.
+     * @throws Exception If an error occurs during payment processing.
+     */
     public void createPayment(PaymentRequest paymentRequest) {
         try {
             log.atInfo().log(
