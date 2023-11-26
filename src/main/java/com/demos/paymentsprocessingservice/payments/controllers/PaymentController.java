@@ -2,14 +2,16 @@ package com.demos.paymentsprocessingservice.payments.controllers;
 
 import com.demos.paymentsprocessingservice.payments.models.PaymentDetails;
 import com.demos.paymentsprocessingservice.payments.models.PaymentRequest;
+import com.demos.paymentsprocessingservice.payments.services.PaymentProcessingService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/payments")
+@RequestMapping(value = "/api/v1/payments", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PaymentController {
 
     private final PaymentProcessingService paymentProcessingService;

@@ -1,11 +1,13 @@
 package com.demos.paymentsprocessingservice.serviceproviders.controllers;
 
+import com.demos.paymentsprocessingservice.common.config.SecurityConfig;
 import com.demos.paymentsprocessingservice.serviceproviders.models.ServiceProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -16,7 +18,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @WebMvcTest(ServiceProviderController.class)
-@ContextConfiguration(classes = ServiceProviderController.class)
+@ContextConfiguration(classes = {SecurityConfig.class, ServiceProviderController.class})
+@WithMockUser
 public class ServiceProviderControllerTest {
 
     @Autowired
