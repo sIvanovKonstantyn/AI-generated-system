@@ -145,7 +145,7 @@ public class PaymentProcessingService {
     }
 
     public PaymentDetails getPaymentDetails(String paymentId) {
-        return paymentHistoryRepository.getById(paymentId)
+        return paymentHistoryRepository.findById(paymentId)
                 .map(PaymentDetails::new)
                 .orElseThrow(() -> new RuntimeException(""));
     }

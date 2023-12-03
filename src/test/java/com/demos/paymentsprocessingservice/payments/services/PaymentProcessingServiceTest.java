@@ -83,7 +83,7 @@ class PaymentProcessingServiceTest {
     void getPaymentDetails() {
         // Arrange
         String paymentId = "payment123";
-        when(paymentHistoryRepository.getById(anyString())).thenReturn(Optional.of(PaymentHistory.builder()
+        when(paymentHistoryRepository.findById(anyString())).thenReturn(Optional.of(PaymentHistory.builder()
                 .paymentState(PaymentState.COMPLETED)
                 .build()));
 

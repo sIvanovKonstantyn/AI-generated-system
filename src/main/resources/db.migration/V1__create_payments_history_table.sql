@@ -4,6 +4,8 @@ CREATE TABLE Payment (
     paymentDescription VARCHAR(255) NOT NULL,
     paymentState VARCHAR(50) NOT NULL,
     error VARCHAR(255),
-    CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES User(id) ON DELETE CASCADE,
-    INDEX idx_userId (userId)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+CREATE INDEX idx_userId ON Payment(userId);

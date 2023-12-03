@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PaymentHistoryRepository extends CrudRepository<PaymentHistory, String> {
-    PaymentHistory save(PaymentHistory paymentHistory);
-
-    Optional<PaymentHistory> getById(String paymentId);
 
     @Query("SELECT * FROM Payment WHERE userId = :userId")
     List<PaymentHistory> getAllForUser(String userName);
