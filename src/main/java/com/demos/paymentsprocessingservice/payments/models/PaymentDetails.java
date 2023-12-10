@@ -21,5 +21,6 @@ public class PaymentDetails {
     public PaymentDetails(PaymentHistory paymentHistory) {
        this.paymentId = paymentHistory.getId();
        this.status = paymentHistory.getPaymentState().name();
+       this.dateTime = paymentHistory.getCreatedAt();
     }
 }

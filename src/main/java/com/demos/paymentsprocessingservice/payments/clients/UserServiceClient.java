@@ -5,6 +5,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserServiceClient {
     public int getBalance(String userId) {
-        return 0;
+        return 100;
     }
 }

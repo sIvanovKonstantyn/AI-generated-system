@@ -1,16 +1,19 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-    initialization-mode: always
-
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
   flyway:
     enabled: true
-    locations: classpath:db/migration
+    baseline-on-migrate: true
 
 logging:
   level:
     org.springframework.jdbc.datasource.init.ScriptUtils: debug
     org.flywaydb.core.internal.command.DbValidate: debug
+
+payment:
+  system:
+    urls:
+      default: http://localhost:8089/stub-payment-provider

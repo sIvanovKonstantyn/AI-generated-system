@@ -9,7 +9,6 @@ import com.demos.paymentsprocessingservice.payments.clients.UserServiceClient;
 import com.demos.paymentsprocessingservice.payments.models.PaymentDetails;
 import com.demos.paymentsprocessingservice.payments.models.PaymentHistory;
 import com.demos.paymentsprocessingservice.payments.models.PaymentRequest;
-import com.demos.paymentsprocessingservice.payments.models.PaymentState;
 import com.demos.paymentsprocessingservice.payments.repositories.PaymentHistoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +53,12 @@ public class PaymentProcessingService {
      * @throws RuntimeException              If an unexpected error occurs during payment processing.
      */
     public String createPayment(PaymentRequest paymentRequest) {
+        validatePaymentRequest(paymentRequest);
+
+        var payment = PaymentHistory.newPaymentHistory(paymentRequest.getUserId(),
+                paymentRequest.getDescription(), paymentRequest.getDateTime()
+        );
+
         try {
             log.atInfo().log(
                     "Payment with description '{}' started processing for the user {}",
@@ -61,23 +66,19 @@ public class PaymentProcessingService {
                     paymentRequest.getUserId()
             );
 
-            validatePaymentRequest(paymentRequest);
-
-            String paymentId = savePaymentState(PaymentState.NEW, paymentRequest.getUserId(),
-                    paymentRequest.getDescription(), null);
+            var paymentId = savePayment(payment);
 
             checkUserBalance(paymentRequest.getUserId(), paymentRequest.getAmount());
-
-            savePaymentState(PaymentState.BALANCE_CHECKED, paymentRequest.getUserId(),
-                    paymentRequest.getDescription(), null);
+            payment.balanceChecked();
+            savePayment(payment);
 
             String paymentSystem = identifyPaymentSystem(paymentRequest.getServiceId());
-
-            savePaymentState(PaymentState.READY_TO_BE_SENT, paymentRequest.getUserId(),
-                    paymentRequest.getDescription(), null);
+            payment.readyToBeSent();
+            savePayment(payment);
 
             sendPaymentRequest(paymentSystem, paymentRequest);
-
+            payment.complete();
+            savePayment(payment);
             log.atInfo().log(
                     "Payment with description '{}' finished processing for the user {}",
                     paymentRequest.getDescription(),
@@ -88,8 +89,8 @@ public class PaymentProcessingService {
 
         } catch (Exception e) {
             log.atError().setCause(e).log(e.getMessage());
-            savePaymentState(PaymentState.ERROR, paymentRequest.getUserId(),
-                    paymentRequest.getDescription(), e.getMessage());
+            payment.hasError(e.getMessage());
+            savePayment(payment);
 
             notifyAboutError();
             throw new PaymentProcessingException("Payment creation exception");
@@ -126,14 +127,19 @@ public class PaymentProcessingService {
         }
     }
 
-    private String savePaymentState(PaymentState paymentState, String userId, String paymentDescription, String error) {
-        var paymentHistory = new PaymentHistory(userId, paymentDescription, paymentState, error);
-        var savedHistory = paymentHistoryRepository.save(paymentHistory);
-        return savedHistory.getId();
+    private String savePayment(PaymentHistory paymentHistory) {
+        if (paymentHistory.isNew()) {
+            PaymentHistory savedItem = paymentHistoryRepository.insert(paymentHistory);
+            return savedItem.getId();
+
+        } else {
+            paymentHistoryRepository.save(paymentHistory);
+        }
+        return paymentHistory.getId();
     }
 
     public List<PaymentDetails> getAllPayments() {
-        return paymentHistoryRepository.getAllForUser(getUserFromSecurityContext())
+        return paymentHistoryRepository.findAllByUserId(getUserFromSecurityContext())
                 .stream()
                 .map(PaymentDetails::new)
                 .collect(Collectors.toList());
@@ -141,7 +147,7 @@ public class PaymentProcessingService {
 
     private String getUserFromSecurityContext() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
+        return authentication == null ? "anonymousUser" : authentication.getName();
     }
 
     public PaymentDetails getPaymentDetails(String paymentId) {
